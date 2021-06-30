@@ -1,0 +1,355 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Using PPMAP &mdash; PPMAP  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> PPMAP
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Using PPMAP</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#setting-up-the-data-and-scripts">Setting up the data and scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#premap-input-parameters">PREMAP input parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-ppmap">Running PPMAP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#output-files">Output files</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PPMAP</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Using PPMAP</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/usage.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="using-ppmap">
+<h1>Using PPMAP<a class="headerlink" href="#using-ppmap" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="setting-up-the-data-and-scripts">
+<h2>Setting up the data and scripts<a class="headerlink" href="#setting-up-the-data-and-scripts" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p>To run <code class="docutils literal notranslate"><span class="pre">ppmap</span></code> you need to create a base directory containing your data, the corresponding psf files, a file listing the input parameters, and a script to run everything.</p>
+<ul class="simple">
+<li><p>Copy your data to the base directory, as fits files in a subdirectory <code class="docutils literal notranslate"><span class="pre">dataset</span></code></p></li>
+<li><p>Copy fits files of the psf for each band to a subdirectory <code class="docutils literal notranslate"><span class="pre">psfset</span></code>. Circular averaged Herschel psfs are available in the directory <code class="docutils literal notranslate"><span class="pre">ppmap/Herschel_psfs/</span></code></p></li>
+<li><p>If you are going to use a colour correction table (eg <code class="docutils literal notranslate"><span class="pre">colourcorr_beta2.txt</span></code>), the file needs to be copied into the base directory.</p></li>
+<li><p>Copy the example file of input parameters, <code class="docutils literal notranslate"><span class="pre">example_premap.inp</span></code> from <code class="docutils literal notranslate"><span class="pre">ppmap/etc</span></code> directory, and edit the parameters as necessary. This file specifies the input data files and determines the range of temperatures, beta, field size, etc to be used in the fitting.</p></li>
+<li><p>The script <code class="docutils literal notranslate"><span class="pre">run_ppmap_all</span></code> will do all the steps needed to run <code class="docutils literal notranslate"><span class="pre">premap</span></code> and <code class="docutils literal notranslate"><span class="pre">ppmap</span></code>. You will need to take a copy of this script from <code class="docutils literal notranslate"><span class="pre">ppmap/etc</span></code> and edit it to use your path names and scheduler set-up.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_ppmap_all.sh</span></code> will create a working directory in a place that you can choose. You can specify which scheduler to use, and how many cpus are available,  and also provide a name <code class="docutils literal notranslate"><span class="pre">NAME</span></code> to identify a particular run. The script will copy your data, psfs and colour files to the working directory, and then run <code class="docutils literal notranslate"><span class="pre">premap</span></code>.  This will create resampled psf files and data in the working directory, and write a sequence of scripts <code class="docutils literal notranslate"><span class="pre">NAME-nn.sh</span></code> which are run by a script <code class="docutils literal notranslate"><span class="pre">run_NAME.sh</span></code>, both adapted to your choice of scheduler.</p></li>
+<li><p>Several lines in <code class="docutils literal notranslate"><span class="pre">run_ppmap_all.sh</span></code> will need to be adapted to match your data, and choices of path names.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">NAME</span></code> is used to identify files for a particular run of ppmap. You must have a file <code class="docutils literal notranslate"><span class="pre">NAME_premap.inp</span></code> to specify the <code class="docutils literal notranslate"><span class="pre">premap</span></code> input parameters for the run. Note, the inp filename must match the identifier that you specify, so if <code class="docutils literal notranslate"><span class="pre">NAME</span></code> is set to <code class="docutils literal notranslate"><span class="pre">test</span></code>, then it will use the parameter file <code class="docutils literal notranslate"><span class="pre">test_premap.inp</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SCHED</span></code> is set to your choice of scheduler, <code class="docutils literal notranslate"><span class="pre">PBS</span></code>, <code class="docutils literal notranslate"><span class="pre">SLURM</span></code> or <code class="docutils literal notranslate"><span class="pre">NONE</span></code>. This selects which <code class="docutils literal notranslate"><span class="pre">template_run_ppmap_*</span></code> file is used to create the <code class="docutils literal notranslate"><span class="pre">NAME-nn.sh</span></code> scripts, and also changes the commands in <code class="docutils literal notranslate"><span class="pre">run_NAME.sh</span></code>. You may need to edit the <code class="docutils literal notranslate"><span class="pre">module</span> <span class="pre">load</span></code> command in <code class="docutils literal notranslate"><span class="pre">template_run_ppmap_PBS.sh</span></code> or <code class="docutils literal notranslate"><span class="pre">template_run_ppmap_SLURM.sh</span></code> to reflect loading the compiler module on your cluster. If so copy the scripts <code class="docutils literal notranslate"><span class="pre">template_run_ppmap_*.sh</span></code> from <code class="docutils literal notranslate"><span class="pre">ppmap/etc</span></code> to your base directory, and edit as necessary. If you do not need to modify them, you do not need to copy the files.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">NCPUS</span></code> is set to the number of CPUS available</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PP_PATH</span></code> is the path to the ppmap install directory</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">WORK</span></code> is the path to the working directory used for log files and results</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Your data directory ready to run a job with <code class="docutils literal notranslate"><span class="pre">NAME=test</span></code> should look something like this:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">test_premap</span><span class="o">.</span><span class="n">inp</span>
+<span class="n">colourcorr_beta2</span><span class="o">.</span><span class="n">txt</span>
+<span class="n">dataset</span><span class="o">/</span>
+<span class="n">psfset</span><span class="o">/</span>
+<span class="n">run_ppmap_all</span><span class="o">.</span><span class="n">sh</span>
+<span class="n">template_run_ppmap_NONE</span><span class="o">.</span><span class="n">sh</span>
+<span class="n">template_run_ppmap_PBS</span><span class="o">.</span><span class="n">sh</span>
+<span class="n">template_run_ppmap_SLURM</span><span class="o">.</span><span class="n">sh</span>
+</pre></div>
+</div>
+<p>Where the directory dataset contains files</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">NGC4321_PACS_100</span><span class="o">.</span><span class="n">fits</span>   <span class="n">NGC4321_PACS_70</span><span class="o">.</span><span class="n">fits</span>    <span class="n">NGC4321_SPIRE_350</span><span class="o">.</span><span class="n">fits</span>
+<span class="n">NGC4321_PACS_160</span><span class="o">.</span><span class="n">fits</span>   <span class="n">NGC4321_SPIRE_250</span><span class="o">.</span><span class="n">fits</span>  <span class="n">NGC4321_SPIRE_500</span><span class="o">.</span><span class="n">fits</span>
+</pre></div>
+</div>
+<p>and the directory psfset contains files</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">psf_0070</span><span class="o">.</span><span class="n">fits</span> <span class="n">psf_0160</span><span class="o">.</span><span class="n">fits</span> <span class="n">psf_0350</span><span class="o">.</span><span class="n">fits</span>
+<span class="n">psf_0100</span><span class="o">.</span><span class="n">fits</span> <span class="n">psf_0250</span><span class="o">.</span><span class="n">fits</span> <span class="n">psf_0500</span><span class="o">.</span><span class="n">fits</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="premap-input-parameters">
+<h2>PREMAP input parameters<a class="headerlink" href="#premap-input-parameters" title="Permalink to this headline">¶</a></h2>
+<p>The file <code class="docutils literal notranslate"><span class="pre">NAME_premap.inp</span></code> sets up various parameters, ending with a list of input fits files</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Parameter</span> <span class="n">value</span>            <span class="n">Name</span> <span class="n">of</span> <span class="n">variable</span>          <span class="n">Description</span>
+
+<span class="mf">185.72875</span>                        <span class="o">&lt;</span><span class="n">gloncent</span><span class="o">&gt;</span>  <span class="p">;</span> <span class="n">RA</span> <span class="n">at</span> <span class="n">centre</span> <span class="p">[</span><span class="n">deg</span><span class="p">]</span>
+<span class="mf">15.822389</span>                        <span class="o">&lt;</span><span class="n">glatcent</span><span class="o">&gt;</span>  <span class="p">;</span> <span class="n">Dec</span> <span class="n">at</span> <span class="n">centre</span> <span class="p">[</span><span class="n">deg</span><span class="p">]</span>
+<span class="mf">0.2</span> <span class="mf">0.2</span>                          <span class="o">&lt;</span><span class="n">fieldsize</span><span class="o">&gt;</span> <span class="p">;</span> <span class="n">field</span> <span class="n">of</span> <span class="n">view</span> <span class="n">dimensions</span> <span class="p">[</span><span class="n">deg</span><span class="p">]</span>
+<span class="mf">4.0</span>                              <span class="o">&lt;</span><span class="n">pixel</span><span class="o">&gt;</span>     <span class="p">;</span> <span class="n">output</span> <span class="n">sampling</span> <span class="n">interval</span> <span class="p">[</span><span class="n">arcsec</span><span class="p">]</span>
+<span class="mf">0.3</span>                              <span class="o">&lt;</span><span class="n">dilution</span><span class="o">&gt;</span>  <span class="p">;</span> <span class="n">a</span> <span class="n">priori</span> <span class="n">dilution</span>
+<span class="mi">10000</span>                            <span class="o">&lt;</span><span class="n">maxiterat</span><span class="o">&gt;</span> <span class="p">;</span> <span class="nb">max</span> <span class="n">no</span><span class="o">.</span> <span class="n">of</span> <span class="n">integration</span> <span class="n">steps</span>
+<span class="mf">1e-6</span>                             <span class="o">&lt;</span><span class="n">rchisqconv</span><span class="o">&gt;</span><span class="p">;</span> <span class="nb">min</span> <span class="n">fractional</span> <span class="n">change</span> <span class="ow">in</span> <span class="n">chi2</span> <span class="k">for</span> <span class="n">convergence</span>
+<span class="mf">20.4e6</span>                           <span class="o">&lt;</span><span class="n">distance</span><span class="o">&gt;</span>  <span class="p">;</span> <span class="p">[</span><span class="n">pc</span><span class="p">]</span>
+<span class="mf">0.1</span>                              <span class="o">&lt;</span><span class="n">kappa300</span><span class="o">&gt;</span>  <span class="p">;</span> <span class="n">reference</span> <span class="n">opacity</span> <span class="p">[</span><span class="n">cm</span><span class="o">^</span><span class="mi">2</span><span class="o">/</span><span class="n">g</span><span class="p">]</span>
+<span class="mi">5</span>                                <span class="o">&lt;</span><span class="n">nbeta</span><span class="o">&gt;</span>     <span class="p">;</span> <span class="n">number</span> <span class="n">of</span> <span class="n">opacity</span> <span class="n">law</span> <span class="n">index</span> <span class="n">values</span>
+<span class="mf">1.</span> <span class="mf">1.5</span> <span class="mf">2.</span> <span class="mf">2.5</span> <span class="mf">3.</span>                 <span class="o">&lt;</span><span class="n">betagrid</span><span class="o">&gt;</span>  <span class="p">;</span> <span class="n">opacity</span> <span class="n">law</span> <span class="n">index</span> <span class="n">values</span>
+<span class="mf">2.0</span> <span class="mf">0.35</span>                         <span class="o">&lt;</span><span class="n">betaprior</span><span class="o">&gt;</span> <span class="p">;</span> <span class="n">a</span> <span class="n">priori</span> <span class="n">mean</span> <span class="ow">and</span> <span class="n">sigma</span> <span class="n">of</span> <span class="n">beta</span>
+<span class="mi">40</span>                               <span class="o">&lt;</span><span class="n">ncells</span><span class="o">&gt;</span>    <span class="p">;</span> <span class="n">nominal</span> <span class="n">size</span> <span class="n">of</span> <span class="n">subfield</span>
+<span class="mi">20</span>                               <span class="o">&lt;</span><span class="n">noverlap</span><span class="o">&gt;</span>  <span class="p">;</span> <span class="n">size</span> <span class="n">of</span> <span class="n">subfield</span> <span class="n">overlap</span>
+<span class="mi">2</span>                                <span class="o">&lt;</span><span class="n">trimlev</span><span class="o">&gt;</span>   <span class="p">;</span> <span class="n">n</span><span class="o">-</span><span class="n">sigma</span> <span class="k">for</span> <span class="n">sigma</span><span class="o">-</span><span class="n">clipped</span> <span class="n">mean</span> <span class="ow">in</span> <span class="n">backgrounds</span> <span class="k">for</span> <span class="n">mosaicing</span>
+<span class="n">colourcorr_beta2</span><span class="o">.</span><span class="n">txt</span>             <span class="o">&lt;</span><span class="n">ccfile</span><span class="o">&gt;</span>    <span class="p">;</span> <span class="n">colour</span> <span class="n">correction</span> <span class="n">table</span>
+<span class="n">N</span>                                <span class="o">&lt;</span><span class="n">highpass</span><span class="o">&gt;</span>  <span class="p">;</span> <span class="n">high</span><span class="o">-</span><span class="k">pass</span> <span class="nb">filter</span> <span class="n">ground</span><span class="o">-</span><span class="n">based</span> <span class="n">data</span> <span class="p">(</span><span class="n">Y</span> <span class="ow">or</span> <span class="n">N</span><span class="p">)</span>
+<span class="mi">6</span>                                <span class="o">&lt;</span><span class="n">Nt</span><span class="o">&gt;</span>        <span class="p">;</span> <span class="n">number</span> <span class="n">of</span> <span class="n">temperatures</span>
+<span class="mf">8.0</span> <span class="mf">50.0</span>                         <span class="o">&lt;</span><span class="n">temprange</span><span class="o">&gt;</span> <span class="p">;</span> <span class="nb">range</span> <span class="n">of</span> <span class="n">temperatures</span> <span class="p">[</span><span class="n">K</span><span class="p">]</span>
+<span class="mi">6</span>                                <span class="o">&lt;</span><span class="n">nbands</span><span class="o">&gt;</span>    <span class="p">;</span> <span class="n">number</span> <span class="n">of</span> <span class="n">bands</span>
+<span class="mi">70</span> <span class="mi">100</span> <span class="mi">160</span> <span class="mi">250</span> <span class="mi">350</span> <span class="mi">500</span>           <span class="o">&lt;</span><span class="n">wavelen</span><span class="o">&gt;</span>   <span class="p">;</span> <span class="n">wavelengths</span> <span class="p">[</span><span class="n">microns</span><span class="p">]</span>
+<span class="mf">5.84</span> <span class="mf">3.91</span> <span class="mf">1.31</span> <span class="mf">0.73</span> <span class="mf">0.49</span>         <span class="o">&lt;</span><span class="n">sigobs</span><span class="o">&gt;</span>    <span class="p">;</span> <span class="n">sky</span> <span class="n">uncertainties</span> <span class="o">-</span> <span class="n">will</span> <span class="n">be</span> <span class="n">estimated</span> <span class="k">if</span> <span class="n">omitted</span>
+                                 <span class="o">&lt;</span><span class="n">obsimages</span><span class="o">&gt;</span> <span class="p">;</span> <span class="nb">list</span> <span class="n">of</span> <span class="n">FITS</span> <span class="n">files</span> <span class="n">follows</span><span class="p">:</span>
+<span class="n">NGC4321_PACS_70</span><span class="o">.</span><span class="n">fits</span>
+<span class="n">NGC4321_PACS_100</span><span class="o">.</span><span class="n">fits</span>
+<span class="n">NGC4321_PACS_160</span><span class="o">.</span><span class="n">fits</span>
+<span class="n">NGC4321_SPIRE_250</span><span class="o">.</span><span class="n">fits</span>
+<span class="n">NGC4321_SPIRE_350</span><span class="o">.</span><span class="n">fits</span>
+<span class="n">NGC4321_SPIRE_500</span><span class="o">.</span><span class="n">fits</span>
+</pre></div>
+</div>
+<p>The parameters are fairly self explanatory but a few explanations will help for some of them.</p>
+<p>The parameter names <code class="docutils literal notranslate"><span class="pre">&lt;gloncent&gt;</span></code> etc. are used are identifiers in <code class="docutils literal notranslate"><span class="pre">premap</span></code>, and so must not be changed without changing the rlevant lines within <code class="docutils literal notranslate"><span class="pre">premap.f90</span></code>.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">&lt;gloncent&gt;</span></code> or <code class="docutils literal notranslate"><span class="pre">&lt;glatcent&gt;</span></code> is &lt;-900, then premap will use the mean centroid of the images as the centre of the output field.</p>
+<p>The code <code class="docutils literal notranslate"><span class="pre">premap</span></code> uses <code class="docutils literal notranslate"><span class="pre">&lt;fieldsize&gt;</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;pixel&gt;</span></code> values to set the size of the output maps of density as for all of the T and beta combinations.</p>
+<p>The value of <code class="docutils literal notranslate"><span class="pre">&lt;dilution&gt;</span></code> sets the a-priori expectation number of points per cell in the (x,y,T,beta) space. So the initial effective number of sources is N0=eta*Nx*Ny*Nbeta*Nt.</p>
+<p><code class="docutils literal notranslate"><span class="pre">&lt;maxiterations&gt;</span></code> sets the maximum number of iterations in the loop to find the best  density maps.</p>
+<p><code class="docutils literal notranslate"><span class="pre">&lt;chisqconv&gt;</span></code> sets a value to decide convergence of the iterations. If the fractional change in reduced chi2 from one step to the next is less than this value the iterations are deemed to have converged. <code class="docutils literal notranslate"><span class="pre">abs(rchisq</span> <span class="pre">-</span> <span class="pre">rchisqprev)/rchisq</span> <span class="pre">&lt;</span> <span class="pre">rchisqconv</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">&lt;distance&gt;</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;kappa300&gt;</span></code> are used to sets the conversion from column density to mass</p>
+<p><code class="docutils literal notranslate"><span class="pre">&lt;nbeta&gt;</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;betagrid&gt;</span></code> specify the number of values of beta, and provide the list of actual values to use.</p>
+<p><code class="docutils literal notranslate"><span class="pre">&lt;betaprior&gt;</span></code> specifies the mean and standard deviation for beta. This sets the starting density rho_0 to be a Gaussian as a function of beta, using the mean and standard deviation. Essentially this acts as a prior on beta, giving more density to the chosen value.</p>
+<p><code class="docutils literal notranslate"><span class="pre">&lt;ncells&gt;</span></code> sets the tile size in pixels and <code class="docutils literal notranslate"><span class="pre">&lt;noverlap&gt;</span></code> sets the number pixels overlap between each tile and it’s neighbours. The output map is divided into a set of overlapping tiles, and <code class="docutils literal notranslate"><span class="pre">ppmap</span></code> is run in parallel to produce all the tiles. When the tiles are all completed, they are mosaiced together to produce the final output maps. <code class="docutils literal notranslate"><span class="pre">premap</span></code> calculates the number of tiles needed to cover the field with the requested tile size and overlap. It then divides the tiles between up to 10 independent scripts which run <code class="docutils literal notranslate"><span class="pre">ppmap</span></code> for all of the tiles, and mosaics them when they are all finished.  If your machine has multiple nodes, the scripts can be run in parallel on separate nodes using PBS or SLURM queue scheduling. On each node, <code class="docutils literal notranslate"><span class="pre">ppmap</span></code> uses OMP to carry out the matrix mutiplications in parallel if multiple cores are available on each node. The number of tiles scales as <code class="docutils literal notranslate"><span class="pre">&lt;ncells&gt;**-2</span></code>, and the time taken for each tile scales roughly as the square of the number of pixels in the tile, <code class="docutils literal notranslate"><span class="pre">&lt;ncells&gt;**4</span></code>. So the total time scales roughly as <code class="docutils literal notranslate"><span class="pre">&lt;ncells&gt;**2</span></code>, and the smaller you make <code class="docutils literal notranslate"><span class="pre">&lt;ncells&gt;</span></code>, the quicker it will run. But, if you make <code class="docutils literal notranslate"><span class="pre">&lt;ncells&gt;</span></code> too small, it will not properly include all the local information when fitting the source densities at each output sky position. Each tile should extend over at least twice the size of the largest FWHM. If you are including SPIRE 500 data, this has FWHM~36”, so the tiles need to be at least 80”. So using 4” pixels, the minimum <code class="docutils literal notranslate"><span class="pre">&lt;ncells&gt;</span></code> is about 20. The changes in density maps between using 20 pixel tiles and 40 pixel tiles are small, of order 0.2%, but are systematic. In practice it is safer to make it bigger, if you have the cpu cycles available.</p>
+<p>The parameter <code class="docutils literal notranslate"><span class="pre">&lt;trimlevel&gt;</span></code> sets the number of sigma used for the n-sigma-clipped mean when adjusting the tile backgrounds in the mosaicing step to join all the tiles into the final maps. If not set it will default to 2.</p>
+<p>The colour correction file <code class="docutils literal notranslate"><span class="pre">&lt;ccfile&gt;</span></code> needs to list the colour correction factors for each band as a table with columns T, cc1, cc2, cc3 etc,  all specified at integer values of T, with spacing of 1K.  Then <code class="docutils literal notranslate"><span class="pre">premap</span></code> will select the entries to match the temperature grid as specified by Nt and range. To disable any colour corrections, set this value to <code class="docutils literal notranslate"><span class="pre">NOCOLCORR</span></code>, or remove the <code class="docutils literal notranslate"><span class="pre">&lt;ccfile&gt;</span></code> line from the input file.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">&lt;highpass&gt;</span></code> is set to y or Y, the data corresponding to ground-based data will be mean subtracted within <code class="docutils literal notranslate"><span class="pre">ppmap</span></code>.  The bands affected are selected by the quoted band wavelengths, corresponding to: SABOCA 350 microns (designated as 351 to distinguish from SPIRE 350); SCUBA2 450 microns ; SCUBA2 850 microns ; LABOCA 870 microns ; Nika2 1150 microns ; ALMA 1300 microns ; Nika2 2000 microns ; PdBI 3000 microns.</p>
+<p><code class="docutils literal notranslate"><span class="pre">&lt;Nt&gt;</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;temprange&gt;</span></code> set the number of temperatures and the min and max values to use. The grid values are logarithmically spaced between the limits.</p>
+<p><code class="docutils literal notranslate"><span class="pre">&lt;nbands&gt;</span></code> is the number of bands for which you have imaging data.</p>
+<p><code class="docutils literal notranslate"><span class="pre">&lt;wavelen&gt;</span></code> specifies the central wavelength of each band in microns. This is used to decide which bands are ‘ground based` and therefore will have the mean background subtracted if <code class="docutils literal notranslate"><span class="pre">&lt;highpass&gt;</span></code> is set to Y. In particular, note that SCUBA 350 must have wavelength 351 to distinguish it from SPIRE 350.</p>
+<p><code class="docutils literal notranslate"><span class="pre">&lt;sigobs&gt;</span></code> sets the sky uncertainties for each band. If they are not specified, either because there is no <code class="docutils literal notranslate"><span class="pre">&lt;sigobs&gt;</span></code> line, or the entries are 0, then <code class="docutils literal notranslate"><span class="pre">premap</span></code> will estimate the noise by subtracting a smoothed version of each image from itself, and calculating the standard deviation of the residual image.</p>
+<p>If set <code class="docutils literal notranslate"><span class="pre">&lt;snrmax&gt;</span></code> is used to limit the <code class="docutils literal notranslate"><span class="pre">SIGBACK</span></code> keyword in the fits headers of the resampled data files.</p>
+<p><code class="docutils literal notranslate"><span class="pre">&lt;obsimages&gt;</span></code> flags the start of the list of files names for the data in all the bands.</p>
+</div>
+<div class="section" id="running-ppmap">
+<h2>Running PPMAP<a class="headerlink" href="#running-ppmap" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Finally you can run the script <code class="docutils literal notranslate"><span class="pre">run_ppmap_all.sh</span></code></p></li>
+</ul>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> sh run_ppmap_all.sh
+</pre></div>
+</div>
+<p>This should create your working directory, and copy your data, psfs and colour corection files there. Then it runs <code class="docutils literal notranslate"><span class="pre">premap</span></code> to pre-process the data and psfs, and write the scripts needed to run <code class="docutils literal notranslate"><span class="pre">ppmap</span></code>.</p>
+<p>It write a script to run <code class="docutils literal notranslate"><span class="pre">ppmap</span></code> on each available node, and it runs the <code class="docutils literal notranslate"><span class="pre">run_NAME.sh</span></code> script to submit the jobs to all of the nodes and produce the final maps. in <code class="docutils literal notranslate"><span class="pre">WORK/NAME_results</span></code>.  The log files and error files will also found in <code class="docutils literal notranslate"><span class="pre">WORK</span></code>.</p>
+<p>When started each instance of <code class="docutils literal notranslate"><span class="pre">ppmap</span></code> reads various input parameters from a file <code class="docutils literal notranslate"><span class="pre">NAME_ppmap.inp</span></code>. This is written by the <code class="docutils literal notranslate"><span class="pre">premap</span></code> program and is the same for each process. It does not need to be edited manually.</p>
+<p>If you specified <code class="docutils literal notranslate"><span class="pre">WORK=/scratch/${NAME}_work</span></code> in <code class="docutils literal notranslate"><span class="pre">run_ppmap_all.sh</span></code> with <code class="docutils literal notranslate"><span class="pre">NAME=test</span></code> then the scripts intermediate files, logs and main output files will be found in <code class="docutils literal notranslate"><span class="pre">/scratch/test_work/</span></code>.</p>
+</div>
+<div class="section" id="output-files">
+<h2>Output files<a class="headerlink" href="#output-files" title="Permalink to this headline">¶</a></h2>
+<p>The output files are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">M100_badpix.fits</span></code> map of bad pixels: 1 if bad; 0 if good</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">M100_beta.fits</span></code> map of density weighted beta</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">M100_cdens.fits</span></code> column density of dust</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">M100_coverage.fits</span></code> area covered by the data: 1 if covered; 0 if not</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">M100_outfield_0250.fits</span></code> map of 250micron data using the output pixel grid</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">M100_psfset.fits</span></code> cube of psf data. The axis order is band, x, y. (So you need to swap the axis order to see it nicely with ds9).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">M100_rchisq.fits</span></code> reduced chi2 of the fit</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">M100_sigtdenscube.fits</span></code> multidimensional cube of uncertainty of source density. Each slice is the map for that particular T and beta. T is axis 3, and beta axis 4.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">M100_tdenscube.fits</span></code> multidimensional cube of source density. Each slice is the density map for that particular T and beta. T is axis 3, and beta axis 4.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">M100_temp.fits</span></code> map of density weighted T</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">M100_tkurt.fits</span></code> map of kurtosis of T density distribution</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">M100_tskew.fits</span></code> map of skewness of T density distribution</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">M100_tvar.fits</span></code> map of variance of T density distribution</p></li>
+</ul>
+<p>The full maps are made up from a mosaic of the individual tiles as specified in the <code class="docutils literal notranslate"><span class="pre">premap.inp</span></code> file. individual tile output maps are in <code class="docutils literal notranslate"><span class="pre">/scratch/test_work/test_results</span></code>. The tiles are combined by <code class="docutils literal notranslate"><span class="pre">ppmap</span></code> when the final tile has finished. Each tile has a background correction applied with the aim of minimizing the sigma-clipped mean differences between overlapping tiles.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Alexander Howard.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
