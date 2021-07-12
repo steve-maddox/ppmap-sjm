@@ -20,13 +20,15 @@
     xstartprint = 0
     ystartprint = 0
     
-    do nc = 2*noverlap,ncells,2 
+    do nc = 2*noverlap,ncells !  removed step of 2
 	nsubxnom = (nx - noverlap)/(nc - noverlap)
 	nsubynom = (ny - noverlap)/(nc - noverlap)
-	nremx = nc - (nsubxnom*(nc-noverlap) + noverlap)
-	nremy = nc - (nsubynom*(nc-noverlap) + noverlap)
-	rem = float(nremx)*nremy
-	if (rem < minrem) then 
+	!nremx = nc - (nsubxnom*(nc-noverlap) + noverlap) ! why nc? should be nx
+	!nremy = nc - (nsubynom*(nc-noverlap) + noverlap)
+	nremx = nx - (nsubxnom*(nc-noverlap) + noverlap) ! why nc? should be nx
+	nremy = ny - (nsubynom*(nc-noverlap) + noverlap)
+        rem = float(nremx)*nremy
+	if (rem < minrem .and. mod(nsubxnom,2)/=0 .and. mod(nsubxnom,2)/=0) then 
 	    ncellsbest = nc
 	    nremxbest = nremx
 	    nremybest = nremy
@@ -42,7 +44,7 @@
 	nsubx = (nx-ncells)/interval + 1
 	nsuby = (ny-ncells)/interval + 1
     endif
-    
+
     if (mod(nsubx,2) == 0) then
     nsubx = nsubx + 1
     endif
@@ -60,28 +62,27 @@
     nsubymidlo = nymid - floor(float(ncellsbest) / 2)
     
     ilostart = nsubxmidlo - (floor(float(nsubx)/2) &
-    * (ncellsbest - noverlap)) + 1
+    * (ncellsbest - noverlap)) 
     jlostart = nsubymidlo - (floor(float(nsuby)/2) &
-    * (ncellsbest - noverlap)) + 1
+    * (ncellsbest - noverlap)) 
     
     iend = ((nsubx - 1) * (ncellsbest - noverlap)) &
     + ncellsbest - 1 + ilostart
     jend = ((nsuby - 1) * (ncellsbest - noverlap)) &
     + ncellsbest - 1 + jlostart
-    
-    do while ((ilostart < 0) .OR. (iend > nx-1))
+
+    do while ((ilostart < 0) .OR. (iend > nx)) ! changed to nx from nx-1
         ilostart = ilostart + (ncellsbest - noverlap)
         nsubx = nsubx - 2
         iend = ((nsubx - 1) * (ncellsbest - noverlap)) &
         + ncellsbest - 1 + ilostart
     end do
-    do while ((jlostart < 0) .OR. (jend > ny-1))
+    do while ((jlostart < 0) .OR. (jend > ny))  ! changed to ny from ny-1
         jlostart = jlostart + (ncellsbest - noverlap)
         nsuby = nsuby - 2
         jend = ((nsuby - 1) * (ncellsbest - noverlap)) &
         + ncellsbest - 1 + jlostart
-    end do
-    
+    end do    
 
     print *,'Imaging array divided into',nsubx,' subfields in x, and', &
 	nsuby,' in y,'

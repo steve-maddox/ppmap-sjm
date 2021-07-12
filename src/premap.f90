@@ -28,7 +28,7 @@
 
         character(len=80), allocatable :: obsimages(:)
         character(len=75), allocatable :: scriptlines(:,:)
-        character(len=20), allocatable :: bands(:)
+        character(len=4), allocatable :: bands(:)
         real(4),   allocatable :: wavelengths(:), betagrid(:), pixset(:)
         real(4),   allocatable :: sigobs(:), Tgrid(:)
         real(4),   allocatable :: beamsizes(:),psfset(:,:,:)
@@ -47,6 +47,7 @@
         character(len=80)      :: sched, run_ppmap_script, ncpus
         character(len=40)      :: option, colourcorr, highpass
         character(len=80)      :: infile
+        character(len=8)       :: units, inputunits
         character(len=40)      :: fieldname
         character(len=8)       :: date, ctype1, ctype2
         character(len=10)      :: time
@@ -56,7 +57,7 @@
         real(4) nyqpix, mag, m2j, kappa300
         integer getbands, getbeta, xref, yref, status
         integer, dimension (8) :: values
-        logical notfinished, makemosaic
+        logical notfinished, makemosaic, node_used
 
         call date_and_time(date,time,zone,values)
         write(*,'("Begin PREMAP on ",a8," at ",a10)') date,time
@@ -93,9 +94,9 @@
         enddo
         close(1)
 
-        print *,' '
-        print *,'-----------------------------'
-        print *,'Field: '//fieldname
+        print '(a)',' '
+        print '(a)','-----------------------------'
+        print '(a)','Field: '//fieldname
 
 ! Get input parameters.
         infile = removeblanks(fieldname//'_premap.inp')
@@ -182,7 +183,10 @@
 	        if (k /= 0 .and. nbands /= 0) read(line(1:k-1),*) wavelengths
 	        k = index(line,'<sigobs>')
 	        if (k /= 0 .and.  nbands /= 0) read(line(1:k-1),*) sigobs
-	        if (index(line,'<obsimages>') /= 0) then 
+	        k = index(line,'<units>')
+	        if (k /= 0 ) inputunits = removeblanks(line(1:8)) 
+
+                if (index(line,'<obsimages>') /= 0) then 
 	            allocate (bands(nbands))
 	            do i = 1,nbands
 		        read(2,'(a)') line
@@ -202,9 +206,9 @@
         do i = 1,Nt
             Tgrid(i) = Tmin * alpha**(i-1)
         enddo
-        print *,'Tgrid [K]:',Tgrid
-        print *,'Beta grid:',betagrid
-        if (nbeta > 1) print *,'Parameters of beta prior:',betamean,sigbeta
+        print '(a,10(f10.4))',' Tgrid [K]:',Tgrid
+        print '(a,10(f10.4))',' Beta grid:',betagrid
+        if (nbeta > 1) print '(a)',' Parameters of beta prior:',betamean,sigbeta
 
 ! Read in the PSFs.
         allocate (beamsizes(nbands))
@@ -236,21 +240,23 @@
 	        stop
             endif 
             call readimage_wcs(imagefile,a,mxp,myp,buffer,ctype1,ctype2, &
-                cp1,cp2,cv1,cv2,cd1,cd2,cr2,pix,wlen,sigm,status)
+                cp1,cp2,cv1,cv2,cd1,cd2,cr2,pix,wlen,sigm,units,status)
             counter = 0
             acut = (maxval(a)-minval(a))/2.
             where(a-minval(a) >= acut) counter = 1
             nhi = sum(counter)
 	    beamsizes(i) = 2.*sqrt(float(nhi)/pi)*pixp
-	    print *,'FWHM of PSF at '//bands(i)//' microns =',beamsizes(i), &
-	        ' arcsec'
+            print '(a,f10.4,a)',' FWHM of PSF at '//bands(i)//&
+                 ' microns = ',beamsizes(i),' arcsec'
+           ! write(*,'(a,a,a,f10.4,a)') 'FWHM of PSF at ',bands(i),&
+           !      ' microns =',beamsizes(i),' arcsec'
 	    icp = max(nint(2.*beamsizes(i)/pixel), 8)
 	    ncp = 2*icp
             allocate (psf(ncp,ncp))
             psf = 0.
 	    pmag = pixp/pixel
 
-! Resample to Nyquist-sampled pixel size.
+! Resample to requested output pixel size.
             call resample(a,mxp,myp,psf,ncp,ncp,pmag)
             psf = psf/pmag**2
             do jj = 1,ncp
@@ -271,12 +277,16 @@
         call writeimage3d(line,psfset,nbands,ncellsp,ncellsp,status)
 
 ! Set gridding parameters.
-        ix = nint(0.5*fieldwid*3600./pixel)
-        iy = nint(0.5*fieldhgt*3600./pixel)
-        nx = 2*ix
-        ny = 2*iy
+        !ix = nint(0.5*fieldwid*3600./pixel) old version ensures nx,ny are even
+        !iy = nint(0.5*fieldhgt*3600./pixel)
+        !nx = 2*ix
+        !ny = 2*iy
+        nx = nint(fieldwid*3600./pixel)
+        ny = nint(fieldhgt*3600./pixel)
+        ix = (nx)/2 
+        iy = (ny)/2 
         irefband = nbands/2 + 1
-
+        
 ! If map centre coordinates have been entered as large negative numbers, then 
 ! take map centre as the mean of the centroids of all of the images.
         if (glon0 <= -900. .or. glat0 <= -900.) then
@@ -294,7 +304,7 @@
                 allocate (a(nxo,nyo))
                 call readimage_wcs(obsimages(ii),a,nxo,nyo,buffer,ctype1, &
                     ctype2,crpix1,crpix2,crval1,crval2,cdelt1,cdelt2,crota2, &
-                    pixel,wl,sig,status)
+                    pixel,wl,sig,units,status)
                 xsum = 0.
                 ysum = 0.
                 tsum = 0.
@@ -352,6 +362,7 @@
         crv2max = -1.e35
 
         do i = 1,nbands
+           print*, obsimages(i)
             call readheader(obsimages(i),nxo,nyo,crpix1,crpix2,cdelt2,status)
             if (status > 0) then
                 print *,'Could not read header of '//obsimages(i)
@@ -364,7 +375,7 @@
             allocate (amask(nxo,nyo))
             amask = 0.
             call readimage_wcs(obsimages(i),a,nxo,nyo,buffer,ctype1,ctype2, &
-                crpix1,crpix2,crval1,crval2,cdelt1,cdelt2,crota2,pixel,wl,sig, &
+                crpix1,crpix2,crval1,crval2,cdelt1,cdelt2,crota2,pixel,wl,sig,units, &
                 status)
             deallocate(buffer)
 	    if (crpix1==0. .and. crpix2==0.) then 
@@ -377,7 +388,6 @@
             if (crval2 > crv2max) crv2max = crval2
             where (a == -999.) amask = 1.
             where (a == -999.) a = 0.
-            
             if (index(ctype1,'TAN') /= 0) then
                 call radec2pix(dble(glon0),dble(glat0),ri,rj,dble(crval1), &
                 dble(crval2),dble(crpix1-1),dble(crpix2-1),dble(cdelt2), &
@@ -394,7 +404,7 @@
                 x0d,y0d)
 	    x0 = x0d                     ! pixel coordinates corresponding to
 	    y0 = y0d                     ! glon0, glat0 in current image
-            write(*,'(i4," microns:")') nint(wavelengths(i))
+            write(*,'("    ",i4," microns:")') nint(wavelengths(i))
             write(*,'("     pixel corr. to centre position:  '// &
                 '(",f7.1,",",f7.1,")")') x0,y0
 
@@ -439,17 +449,47 @@
 ! blank pixels.
             allocate (a(nx,ny))
             allocate (amask(nx,ny))
-	    a = abig(ibig-ix+1:ibig-ix+nx, ibig-iy+1:ibig-iy+ny) ! MJy/ster
+	    a = abig(ibig-ix+1:ibig-ix+nx, ibig-iy+1:ibig-iy+ny) 
 	    amask = abigmask(ibig-ix+1:ibig-ix+nx, ibig-iy+1:ibig-iy+ny)
             deallocate(abig)
             deallocate(abigmask)
 
-! Units conversion.
-	    m2j = 1.e6*abs((cdelt1*cdelt2)/mag**2)*dtor**2  ! units conversion
-	    a = a*m2j				            ! Jy per new pixel
-            asig = sigsky*m2j
-
- 	    print *,'    sigma =',asig/m2j,' MJy/sr;  peak SNR =',maxval(a)/asig
+            ! Units conversion.
+            ! if the header has no units, use those give in the parameter file 
+            if(units .eq. 'NONE') then
+               if( inputunits .eq. ' ') then
+                  print*, 'No units have been given'
+                  stop
+               else
+                  units = inputunits
+               endif
+            endif
+            if(units .ne. inputunits) then
+               print*, 'Units in header not the same as in the parameter file'
+               print*, '.',units,'.',inputunits,'.'
+               !stop
+            end if
+            k = index(units,'Jy/pix')
+            if(k/=0) then
+               print*, '    Units in Jy/pix'
+               ! units are per pix 
+               m2j = 1/mag**2  ! units conversion
+               a = a*m2j				       ! Jy per new pixel
+               asig = sigsky*m2j
+            else 
+               k = index(units,'MJy/str')
+               if(k/=0) then 
+                  print*, '    Units in MJy/str'
+                  ! units are per str  
+                  m2j = 1.e6*abs((cdelt1*cdelt2)/mag**2)*dtor**2  ! units conversion
+                  a = a*m2j				       ! Jy per new pixel
+                  asig = sigsky*m2j
+               else
+                  print* , 'unrecognised units ' , units
+                  stop
+               endif
+            end if
+ 	    print *,'    sigma =',asig,' Jy/pixel;  peak SNR =',maxval(a)/asig
             imagefile = removeblanks(fieldname//'_'//bands(i)//'.fits')
             wl = wavelengths(i)
 
@@ -559,13 +599,18 @@
             nexcess = 0
             nfields = 0
             do n = 1,nnodes
-                do i = 1,nperlist
-                    seq(n,i) = (n-1)*nperlist + i-1
-                    if (seq(n,i) >= nsubx*nsuby) seq(n,i) = -1
-                    if (seq(n,i) /= -1) nfields = nfields + 1
-                enddo
+               node_used = .false. 
+               do i = 1,nperlist
+                  seq(n,i) = (n-1)*nperlist + i-1 ! count of which field 
+                  if (seq(n,i) >= nsubx*nsuby) seq(n,i) = -1
+                  if (seq(n,i) /= -1) then
+                     nfields = nfields + 1
+                     node_used = .true.
+                  end if
+               enddo
+               if(node_used) nlists = nlists+1
             enddo
-	    nlists = nnodes
+	    !nlists = nnodes
 	    maxperlist = nperlist
         else
 	    nfields = 1
@@ -660,7 +705,7 @@
         print*, 'n tiles per list ', nperlist
         print*, 'nlists ', nlists
 
-            ! Generate set of scripts.
+        ! Generate set of scripts.
         allocate (scriptlines(nlines,nlists))
         outfile = removeblanks('run_'//fieldname//'.sh')
         open (unit=3, form='formatted',file=outfile,status='unknown')

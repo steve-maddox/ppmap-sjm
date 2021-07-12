@@ -11,7 +11,8 @@
         m = 0
 
         do i = 1,l
-            if (index(string(i:i),' ') == 0) then
+           if( (index(string(i:i),' ') == 0 ) &
+                .and. (index(string(i:i),'	') == 0) )  then
                 m = m+1
                 removeblanks(m:m) = string(i:i)
             endif
