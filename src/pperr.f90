@@ -40,7 +40,7 @@
         character(len=4),  allocatable :: bands(:)
         character(len=80)      :: estrho,line,imagefile,outfile,removeblanks
         character(len=40)      :: fieldname
-        character(len=8)       :: ctype1, ctype2
+        character(len=8)       :: ctype1, ctype2, units
         real(4)    cctab(Nt,nbands)
         real(4)    nprior,npost,kappa300
         real(4)    Tgrid(Nt),betagrid(nbeta)
@@ -159,7 +159,7 @@
             endif
             call readimage_wcs(imagefile,a,nximage,nyimage,buffer, &
                 ctype1,ctype2,crpix1,crpix2,crval1,crval2,cdelt1,cdelt2, &
-                crota2,pix,wl,sigback,status)
+                crota2,pix,wl,sigback,units,status)
 	    sigcent(i) = sigback
 	    nyqpix(i) = cdelt2*3600.
         enddo

@@ -53,7 +53,7 @@
         integer(4),allocatable :: wt(:,:),wto(:,:),overlap(:,:)
         integer(4),allocatable :: ok(:,:,:,:),counter(:)
 
-        character(len=8)       :: date, ctype1, ctype2
+        character(len=8)       :: date, ctype1, ctype2, units
         character(len=10)      :: time
         character(len=5)       :: zone
         character(len=20)      :: fieldname
@@ -126,7 +126,7 @@
             endif
             call readimage_wcs(imagefile,a,nximage,nyimage,buffer, &
                 ctype1,ctype2,crpix1,crpix2,crval1,crval2,cdelt1,cdelt2, &
-                crota2,pixel,wl,sig,status)
+                crota2,pixel,wl,sig,units,status)
             if (status > 0) then
                 print *,'Error reading image:'
                 print *,imagefile
@@ -152,7 +152,7 @@
         line = removeblanks(fieldname//'_coverage.fits')
         call readimage_wcs(line,cover,nximage,nyimage,buffer, &
                 ctype1,ctype2,crpix1out,crpix2out,crval1out,crval2out, &
-                cdelt1out,cdelt2out,crota2,pixel,wl,sig,status)
+                cdelt1out,cdelt2out,crota2,pixel,wl,sig,units,status)
         if (status > 0) then
             print *,'Error reading coverage map'
             stop
@@ -545,7 +545,7 @@
         deallocate(bkern)
         deallocate(ifield)
         deallocate(jfield)
-      endif
+     endif
 
         deallocate(x0set)
         deallocate(y0set)
@@ -593,7 +593,7 @@
 	        nrat(m) = Nexp/Nprior
             endif
 
-	    if(ix0>=0 .and. iy0>=0 .and. ix0+nx<nximage .and. iy0+ny<nyimage) &
+	    if(ix0>=0 .and. iy0>=0 .and. ix0+nx<=nximage .and. iy0+ny<=nyimage) &
               then
                 do j = iy0+1,iy0+ny
                 do i = ix0+1,ix0+nx

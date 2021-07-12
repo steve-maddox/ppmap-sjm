@@ -5,7 +5,8 @@ Parameter value            Name of variable          Description
 2.0 1.5                          <fieldsize>; field of view dimensions [deg]
 6.                               <pixel>    ; output sampling interval [arcsec]
 0.3                              <dilution> ; a priori dilution 
-10000                             <maxiterat>; max no. of integration steps
+10000                            <maxiterat>; max no. of integration steps
+1e-9                             <rchisqconv>; min fractional change in chi2 
 140.                             <distance> ; [pc]
 0.1                              <kappa300> ; reference opacity [cm^2/g]
 4                                <nbeta>    ; number of opacity law index values
@@ -16,6 +17,7 @@ Parameter value            Name of variable          Description
 Herschel.txt                     <ccfile>   ; colour correction table
 12                               <Nt>       ; number of temperatures
 7. 40.                           <temprange>; range of temperatures [K]
+Jy/pix                           <units>    ; units of input data
 5                                <nbands>   ; number of bands
 70. 160. 250. 350. 500.          <wavelen>  ; wavelengths [microns]
 5.84 3.91 1.31 0.73 0.49         <sigobs>

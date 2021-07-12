@@ -1,6 +1,6 @@
       subroutine readimage_wcs(infile,a,nx,ny,buffer,ctype1,ctype2,
      &    crpix1,crpix2,crval1,crval2,cdelt1,cdelt2,crota2,pixel,
-     &    wl,sig,status)
+     &    wl,sig,units,status)
 
 C  Read a FITS image and WCS keywords.
 
@@ -10,7 +10,7 @@ C  Read a FITS image and WCS keywords.
       logical anynull
       character filename*80,comment*80
       character*(*) infile
-      character*8 ctype1,ctype2
+      character*8 ctype1,ctype2,units
 
 C  The STATUS parameter must always be initialized.
       status=0
@@ -41,14 +41,19 @@ C  Read keywords
            call ftgkye(unit,'CD2_2',cdelt2,comment,status)
        endif
        call ftgkye(unit,'CROTA2',crota2,comment,status)
-        if (status > 0) then
-            crota2 = 0.
-            status = 0
-        endif
+       if (status > 0) then
+          crota2 = 0.
+          status = 0
+       endif
+       call ftgkys(unit,'SIGUNIT',units,comment,status)
+       if(status > 0) then
+          units = 'NONE'
+          status = 0 
+       endif 
        call ftgkye(unit,'PIXEL',pixel,comment,status)
        call ftgkye(unit,'WAVELEN',wl,comment,status)
        call ftgkye(unit,'SIGBACK',sig,comment,status)
-        status = 0
+       status = 0
 
 C  Initialize variables
       npixels=nx*ny

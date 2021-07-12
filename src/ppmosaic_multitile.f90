@@ -219,7 +219,7 @@
             endif
             call readimage_wcs(imagefile,a,nximage,nyimage,buffer, &
                 ctype1,ctype2,crpix1,crpix2,crval1,crval2,cdelt1,cdelt2, &
-                crota2,pixel,wl,sig,status)
+                crota2,pixel,wl,sig,units,status)
             if (status > 0) then
                 print *,'Error reading image:'
                 print *,imagefile
