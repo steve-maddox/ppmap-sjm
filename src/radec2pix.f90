@@ -13,7 +13,7 @@
 
         implicit real(8) (a-h,o-z)
 
-        real(8),   parameter   :: dtor    = 0.0174533   ! degrees to radians
+        real(8), parameter :: dtor = 0.017453292519943295 ! degrees to radians
         real(8) i, j, iref, jref, line
         logical inverse
 

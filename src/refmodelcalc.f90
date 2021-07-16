@@ -24,7 +24,7 @@
         allocate (image(nref,nref))
         image = 0.
         iref = nref/2 + 1
-        fwhm = fwhmobj*pixel
+        fwhm = fwhmobj*pixel * 0.01 ! make it very narrow
         coef = -4.*log(2.)*(pixel/fwhm)**2
 
         allocate (tau(nref,nref))
@@ -34,6 +34,7 @@
             tau(i,j) = exp(coef*(float(i-iref)**2 + float(j-iref)**2))
         enddo
         enddo
+        !tau = tau/sum(tau) 
         image = tau*(reflambda/lambda)**beta * planckfn(lambda,T)*pixel**2
         deallocate(tau)
 

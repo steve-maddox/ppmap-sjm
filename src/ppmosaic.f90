@@ -841,7 +841,7 @@
         deallocate(nrat)
 
         write(*,'(" Total mass                        =",1pe12.3," Msun")') &
-            sum(rho)*(1.e20/Msun)*mu*mH*(pixel*(dtor/3600.)*tdistance*pc)**2 
+             sum(rho)*(1.e20/Msun)*mu*mH*(pixel*(dtor/3600.)*tdistance*pc)**2
         rhofile = removeblanks(fieldname//'_tdenscube.fits')
         sigrhofile = removeblanks(fieldname//'_sigtdenscube.fits')
         cdensfile = removeblanks(fieldname//'_cdens.fits')

@@ -1,4 +1,4 @@
-        subroutine regrid(a,ar,nx,ny,xref,yref,x0,y0,rmag)
+        subroutine regrid(a,ar,nx,ny,ixref,iyref,x0,y0,rmag)
 
 ! Regrid array a (nx by ny) onto an array, ar, of the same size, such
 ! that pixel (x0,y0) gets moved to (xref,yref) with a magnification
@@ -15,7 +15,7 @@
 
         real(8),   allocatable             ::   grid(:,:)
         real(8) x,xmin,xmax,y,ymin,ymax,z,zx,zy,zxx,zyy,zxy
-        integer(4) xref,yref
+        integer(4) ixref,iyref
 
         allocate( grid(0:nx, 0:ny) )
         grid = 0.
@@ -26,8 +26,8 @@
         enddo
         do j = 1,ny
         do i = 1,nx
-            x = x0 + (i-xref)/rmag     ! these are the original x and y values
-            y = y0 + (j-yref)/rmag     ! sampled by i and j in the new array
+            x = x0 + (i-ixref)/rmag     ! these are the original x and y values
+            y = y0 + (j-iyref)/rmag     ! sampled by i and j in the new array
             if (x >=1.d0 .and. x <= nx*1.d0 .and. &
                 y >=1.d0 .and. y <= ny*1.d0) then
                 call intrp2(x, 0.d0, nx*1.d0, nx, y, 0.d0, &

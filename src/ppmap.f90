@@ -44,7 +44,7 @@
         real(4),   allocatable :: wavelengths(:), betagrid(:), pixset(:)
         real(4),   allocatable :: psfset(:,:,:),psf(:,:)
         real(4),   allocatable :: obsset(:,:,:),obsmask(:,:,:),sigset(:,:,:)
-        real(4),   allocatable :: modelmap(:,:), residmap(:,:)
+        real(4),   allocatable :: modelmap(:,:), residmap(:,:), datamap(:,:)
         integer(4),allocatable :: psfsizes(:)
         integer(4),allocatable :: support(:), mskdata(:), emsk(:), nobsind(:)
         integer(4),allocatable :: xlo(:), xhi(:), ylo(:), yhi(:)
@@ -56,7 +56,7 @@
         integer, dimension (8) :: values
 
         real(8)    x,y,z,zx,zy,zxx,zyy,zxy,nref8
-        real(8)    t_0, t_1, ra, dec, xpixr, ypixr
+        real(8)    t_0, t_1, ra, dec, xpixr, ypixr, ri, rj
         real(4)    Nexp, Nprior, mag, lambda, kappa300
         integer(4) status, count
         logical  starting, ok, stepok, finetune, converged, diverged, badrho
@@ -231,7 +231,14 @@
            call readimage_wcs(line,cover,nx,ny,buffer, &
                 ctype1out,ctype2out,crpix1out,crpix2out,crval1out,crval2out, &
                 cdelt1out,cdelt2out,crota2,pixel,wl,sig,units,status)
-           
+           ! get ra, dec of centre
+           ri = dble(nx/2+1)
+           rj = dble(ny/2+1)
+           call radec2pix(ra,dec,ri,rj,dble(crval1out), &
+                dble(crval2out),dble(crpix1out),dble(crpix2out),dble(cdelt2out), &
+                .true.)
+           glon0 = real(ra)
+           glat0 = real(dec)
            if (status > 0) then
               print *,'Error reading coverage map'
               stop
@@ -289,7 +296,8 @@
                  do j = 1,ny
                     do i = 1,nx
                        m = m+1
-                       if (i>iglo .and. i <= ighi+1 .and. j>jglo .and. j <= jghi+1) then
+                       if (i>iglo .and. i <= ighi+1 .and. j>jglo .and. j <= jghi+1) then ! changed to >= for iglo and jglo
+!                       if (i>=iglo .and. i <= ighi+1 .and. j>=jglo .and. j <= jghi+1) then ! changed to >= for iglo and jglo
                           k = k+1
                           support(k) = m
                        endif
@@ -369,7 +377,7 @@
                     allocate( grid(0:nref, 0:nref) )
                     grid = 0.
                     n = 0
-
+                    print*, lam, nref
                     do kb = 1,nbeta
                        do kt = 1,Nt
                           call refmodelcalc(wavelengths(lam),reflambda,betagrid(kb), &
@@ -379,12 +387,17 @@
                              do ig = 1,nref
                                 grid(ig,jg) = refmodel(ig,jg)
                              enddo
+                             if(kt==1 .and. kb==1 ) then
+                                write(outfile,'(a,i4.4,a)') 'refmodel_',nint(wavelengths(lam)),'.fits'
+                                call writeimage2d(outfile,refmodel,nref,nref,' ', & 
+                                     ctype1out,ctype2out,nref/2.,nref/2.,glon0,glat0,cdelt1out,cdelt2out,crota2,status)
+                             endif
                           enddo
-                          grid = grid/mag**2
+                          grid = grid/mag**2 ! grid is the psf smoothed gaussian using the output pixel size 
                           !print*, Tgrid(kt), maxval(grid),maxval(grid)*mag**2
                           iref = nref/2 + 1
-                          ! npoints is the number of positions for points, ie the
-                          ! number of pixels in the output grid -- SJM
+                          ! npoints is the number of positions for points, 
+                          ! ie the number of pixels in the output grid 
                           do np = 1,npoints 
                              n = n + 1
                              i = mod(support(np), nx)
@@ -392,7 +405,7 @@
                              ioff = ix + iref - i
                              joff = iy + iref - j
                              rref = nref
-
+                             
                              ! For each pixel (ii,jj) in the observational subgrid, determine the 
                              ! response to a model source at position (i,j) in the imaging grid.
                              k = 0
@@ -400,8 +413,8 @@
                              do jj = 1,nysub
                                 do ii = 1,nxsub
                                    k = k+1
-                                   x = min(max(ioff+(ilom+ii-ix-1)/mag, 1.), rref)
-                                   y = min(max(joff+(jlom+jj-iy-1)/mag, 1.), rref)
+                                   x = min(max(ioff+(ilom+ii-ix-1)/mag, 1.), rref) 
+                                   y = min(max(joff+(jlom+jj-iy-1)/mag, 1.), rref) 
                                    call intrp2(x, 0.d0, nref8, nref, y, 0.d0, &
                                         nref8, nref, grid,z,zx,zy,zxx,zyy,zxy)
                                    B(is+k,n) = z
@@ -526,7 +539,8 @@
                        end if
 
               
-                       if ( .false. .and. (drchisq > 0) ) then
+                       if ( (drchisq > 0) .and. (.not. starting) ) then
+                       !if ( .false. .and. (drchisq > 0) ) then
                           write(*,'(a,i6,a,es8.1,es8.1,a)') 'step ',it, 'rchi2, drchi2 ', rchisq, drchisq, ' - diverged'
                           diverged = .true. ! stop the loop
                           ! use previous step for results, because this step is no good
@@ -671,6 +685,7 @@
                  print*, 'doing model reconstruction '
                  allocate (modelmap(nx,ny))
                  allocate (residmap(nx,ny))
+                 allocate (datamap(nx,ny))
                  nbuffer = nx*ny
                  allocate (buffer(nbuffer))
                  allocate (a(nx,ny))
@@ -680,6 +695,7 @@
                  do lam = 1,nbands
                     modelmap = fnan ! nan
                     residmap = fnan ! nan
+                    datamap = fnan ! nan
                     mag = pixel/pixset(lam)
                     ilom = max(ix+nint((ilo-ix)*mag)-1, 0)
                     ihim = min(ix+nint((ihi-ix)*mag)+1, nx-1)
@@ -693,7 +709,8 @@
                                j>jlom .and. j <= jhim+1) then
                              count = count+1
                              modelmap(i,j) = Brho(is+count)
-                             residmap(i,j) = Brho(is+count)-data(is+icount)
+                             residmap(i,j) = Brho(is+count)-data(is+count)
+                             datamap(i,j)  = data(is+count)
                           end if
                        enddo
                     enddo
@@ -712,6 +729,12 @@
                          fieldname,'_',isf,'_resid',nint(wavelengths(lam)),'.fits'
                     outfile = removeblanks(outfile)
                     call writeimage2d(outfile,residmap,ny,ny,' ', &
+                         ctype1,ctype2,crpix1,crpix2,crval1,crval2, &
+                         cdelt1,cdelt2,crota2,status)
+                    write(outfile,'(a,a,a,a,i5.5,a,i4.4,a)') fieldname,'_results/',&
+                         fieldname,'_',isf,'_data',nint(wavelengths(lam)),'.fits'
+                    outfile = removeblanks(outfile)
+                    call writeimage2d(outfile,datamap,ny,ny,' ', &
                          ctype1,ctype2,crpix1,crpix2,crval1,crval2, &
                          cdelt1,cdelt2,crota2,status)
            

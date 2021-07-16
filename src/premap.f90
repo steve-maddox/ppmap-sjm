@@ -52,10 +52,11 @@
         character(len=8)       :: date, ctype1, ctype2
         character(len=10)      :: time
         character(len=5)       :: zone
-        real(8) ri,rj,x0d,y0d,dglon0,dglat0
+        real(8) ri,rj,x0d,y0d,dglon0,dglat0, dra, ddec
         real(4) tempc(10000)
         real(4) nyqpix, mag, m2j, kappa300
-        integer getbands, getbeta, xref, yref, status
+        integer getbands, getbeta, ixref, iyref,  status
+        real(8) xref, yref
         integer, dimension (8) :: values
         logical notfinished, makemosaic, node_used
 
@@ -283,8 +284,8 @@
         !ny = 2*iy
         nx = nint(fieldwid*3600./pixel)
         ny = nint(fieldhgt*3600./pixel)
-        ix = (nx)/2 
-        iy = (ny)/2 
+        ix = nx/2+1
+        iy = ny/2+1 
         irefband = nbands/2 + 1
         
 ! If map centre coordinates have been entered as large negative numbers, then 
@@ -323,10 +324,10 @@
                 deallocate(buffer)
                 
                 if (index(ctype1,'TAN') /= 0) then
-                    call pixcrot(ri,rj,dble(crpix1-1),dble(crpix2-1), &
+                    call pixcrot(ri,rj,dble(crpix1),dble(crpix2), &
                         dble(crota2),x0d,y0d)
                     call radec2pix(dglon0,dglat0,x0d,y0d,dble(crval1), &
-                        dble(crval2),dble(crpix1-1),dble(crpix2-1), &
+                        dble(crval2),dble(crpix1),dble(crpix2), &
                         dble(cdelt2),.true.)              ! tangent projection
                     glon0 = dglon0
                     glat0 = dglat0
@@ -378,7 +379,7 @@
                 crpix1,crpix2,crval1,crval2,cdelt1,cdelt2,crota2,pixel,wl,sig,units, &
                 status)
             deallocate(buffer)
-	    if (crpix1==0. .and. crpix2==0.) then 
+ 	    if (crpix1==0. .and. crpix2==0.) then 
                 print *,'FITS header does not contain reference pixel'
                 stop
 	    endif
@@ -390,17 +391,17 @@
             where (a == -999.) a = 0.
             if (index(ctype1,'TAN') /= 0) then
                 call radec2pix(dble(glon0),dble(glat0),ri,rj,dble(crval1), &
-                dble(crval2),dble(crpix1-1),dble(crpix2-1),dble(cdelt2), &
+                dble(crval2),dble(crpix1),dble(crpix2),dble(cdelt2), &
                 .false.)                                ! tangent projection
-            else
+             else
                 delg = glon0 - crval1
                 if (delg < -180.) delg = delg + 360.
                 if (delg > 180.) delg = delg - 360.
                 cd = cos(crval2*dtor)
-                ri = crpix1-1 + delg*cd/cdelt1
-                rj = crpix2-1 + (glat0 - crval2)/cdelt2 ! default (plat carre)
+                ri = crpix1 + delg*cd/cdelt1
+                rj = crpix2 + (glat0 - crval2)/cdelt2 ! default (plat carre)
             endif
-            call pixcrot(ri,rj,dble(crpix1-1),dble(crpix2-1),dble(-crota2), &
+            call pixcrot(ri,rj,dble(crpix1),dble(crpix2),dble(-crota2), &
                 x0d,y0d)
 	    x0 = x0d                     ! pixel coordinates corresponding to
 	    y0 = y0d                     ! glon0, glat0 in current image
@@ -408,32 +409,20 @@
             write(*,'("     pixel corr. to centre position:  '// &
                 '(",f7.1,",",f7.1,")")') x0,y0
 
-            xc = nxo/2 - 1.
-            yc = nyo/2 - 1.
-	    xref = nint(xc)		 ! integral pixel to serve as
-	    yref = nint(yc)              ! reference pixel in this image
-
+            xc = nxo/2  !removed the -1 SJM
+            yc = nyo/2 
+	    ixref = nint(xc)	 ! integral pixel to serve as 
+	    iyref = nint(yc)     ! reference pixel in this image
+	    xref = xc
+	    yref = yc
 ! We wish to map x0,y0 onto xref,yref.
 	    asecpix = cdelt2*3600.
 	    nyqpix = max((beamsizes(i)/2.), pixel)
-	    mag = asecpix/nyqpix
+            mag = asecpix/nyqpix
             allocate (ar(nxo,nyo))
             allocate (armask(nxo,nyo))
-            call regrid(a,ar,nxo,nyo,xref+1,yref+1,x0+1.,y0+1.,mag)
-            call regrid(amask,armask,nxo,nyo,xref+1,yref+1,x0+1.,y0+1.,mag)
-	    ibig = max(nxo+nx, nyo+ny)
-	    allocate (abig(2*ibig, 2*ibig))
-	    allocate (abigmask(2*ibig, 2*ibig))
-            abig = 0.
-            abigmask = 0.
-            do jj = 1,nyo
-            do ii = 1,nxo
-                abig(ibig-xref+ii,ibig-yref+jj) = ar(ii,jj)
-                abigmask(ibig-xref+ii,ibig-yref+jj) = armask(ii,jj)
-            enddo
-            enddo
-            deallocate(ar)
-            deallocate(armask)
+            call regrid(a,ar,nxo,nyo,ixref,iyref,x0,y0,mag)  
+            call regrid(amask,armask,nxo,nyo,ixref,iyref,x0,y0,mag)
 
 ! Estimate standard deviation of sky background if necessary.
             if (sigobs(i) /= 0.) then
@@ -449,10 +438,10 @@
 ! blank pixels.
             allocate (a(nx,ny))
             allocate (amask(nx,ny))
-	    a = abig(ibig-ix+1:ibig-ix+nx, ibig-iy+1:ibig-iy+ny) 
-	    amask = abigmask(ibig-ix+1:ibig-ix+nx, ibig-iy+1:ibig-iy+ny)
-            deallocate(abig)
-            deallocate(abigmask)
+	    a = ar(ixref-ix+1:ixref-ix+nx, iyref-iy+1:iyref-iy+ny) 
+	    amask = ar(ixref-ix+1:ixref-ix+nx, iyref-iy+1:iyref-iy+ny)
+            deallocate(ar)
+            deallocate(armask)
 
             ! Units conversion.
             ! if the header has no units, use those give in the parameter file 
@@ -496,9 +485,9 @@
 ! Update the CRPIXn values. Find pixel in regridded image with RA,Dec of
 ! the
 ! tangent point.
-            crpix1new = ix+1 + mag*(crpix1-x0-1)
-            crpix2new = iy+1 + mag*(crpix2-y0-1)
-	    print *,'    writing out '//imagefile(1:40)
+            crpix1new = ix + mag*(crpix1-x0) ! removed +1 and -1 
+            crpix2new = iy + mag*(crpix2-y0)
+            print *,'    writing out '//imagefile(1:40)
             call writeimage_wcs(imagefile,a,nx,ny,ctype1,ctype2, &
                 crpix1new,crpix2new,crval1,crval2,cdelt1/mag,cdelt2/mag, &
                 crota2,pixel,wl,max(asig,maxval(a)/snrmax),status)
@@ -512,15 +501,46 @@
             allocate (armask(nx,ny))
             call resample(a,nx,ny,ar,nx,ny,nyqpix/pixel)
             call resample(amask,nx,ny,armask,nx,ny,nyqpix/pixel)
-            if (i==irefband) then
-                afield = ar
-                crp1 = nx/2+1 + (crpix1new - nx/2 - 1)*nyqpix/pixel
-                crp2 = ny/2+1 + (crpix2new - ny/2 - 1)*nyqpix/pixel
-                crval1ref = crval1
-                crval2ref = crval2
-            endif
             where(ar==0.) cover = 0.
             where(armask >= 0.5) cmask = 1.
+            if (i==irefband) then
+                afield = ar
+                crp1 = ix + (crpix1new - ix )*nyqpix/pixel ! rmeoved +1 and -1 
+                crp2 = iy + (crpix2new - iy )*nyqpix/pixel
+                crval1ref = crval1
+                crval2ref = crval2
+                print*, 'ref image' 
+                print*, crpix1new, crpix2new, ix, iy, crval1, crval2
+                print*, crp1, crp2
+                xxold = (ix-crpix1new)*(-nyqpix)/3600. + crval1
+                yyold = (iy-crpix2new)*nyqpix/3600. + crval2
+                call radec2pix(dble(glon0),dble(glat0),ri,rj,dble(crval1), &
+                     dble(crval2),dble(crpix1new),dble(crpix2new),dble(nyqpix/3600.), &
+                     .false.)
+                call radec2pix(dra,ddec,dble(ix),dble(iy),dble(crval1), &
+                     dble(crval2),dble(crpix1new),dble(crpix2new),dble(nyqpix/3600.), &
+                     .true.)
+                print*, dra,ddec,xxold, yyold, ri, rj
+                xxnew = (ix-crp1)*(-pixel)/3600. + crval1
+                yynew = (iy-crp2)*pixel/3600. + crval2
+                call radec2pix(dble(glon0),dble(glat0),ri,rj,dble(crval1), &
+                     dble(crval2),dble(crp1),dble(crp2),dble(pixel/3600.), &
+                     .false.)
+                 call radec2pix(dra,ddec,dble(ix),dble(iy),dble(crval1), &
+                     dble(crval2),dble(crp1),dble(crp2),dble(pixel/3600.), &
+                     .true.)
+               print*, dra,ddec,xxnew, yynew, ri, rj
+
+                write(outfile,'(a,i4.4,a)') 'tempa_',nint(wavelengths(i)),'.fits'
+                call writeimage2d(outfile,a,nx,ny,' ', &
+                     ctype1,ctype2,crpix1new,crpix2new,crval1,crval2,-nyqpix/3600., &
+                     nyqpix/3600.,crota2,status)
+                print*, 'pixel sizes ', cdelt2/mag, nyqpix/3600.
+                write(outfile,'(a,i4.4,a)') 'tempar_',nint(wavelengths(i)),'.fits'
+                call writeimage2d(outfile,ar,nx,nx,' ', &
+                     ctype1,ctype2,crp1,crp2,crval1,crval2,-pixel/3600., &
+                     pixel/3600.,crota2,status)
+             endif
             deallocate(ar)
             deallocate(armask)
             deallocate(a)

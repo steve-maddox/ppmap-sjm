@@ -74,20 +74,22 @@ C  Write other optional keywords to the header
      &  'name of the coordinate axis',status)
       call ftpkys(unit,'CTYPE2',ctype2, 
      &  'name of the coordinate axis',status)
-      call ftpkyf(unit,'CRPIX1',crpix1,6,
+      call ftpkyf(unit,'CRPIX1',crpix1,12,
      &  'coordinate system reference pixel',status)
-      call ftpkyf(unit,'CRPIX2',crpix2,6,
+      call ftpkyf(unit,'CRPIX2',crpix2,12,
      &  'coordinate system reference pixel',status)
-      call ftpkyf(unit,'CRVAL1',crval1,6,
+      call ftpkyf(unit,'CRVAL1',crval1,12,
      &  'coordinate value at reference pixel',status)
-      call ftpkyf(unit,'CRVAL2',crval2,6,
+      call ftpkyf(unit,'CRVAL2',crval2,12,
      &  'coordinate value at reference pixel',status)
-      call ftpkyf(unit,'CDELT1',cdelt1,6,
+      call ftpkyf(unit,'CDELT1',cdelt1,12,
      &  'coordinate increment along axis',status)
-      call ftpkyf(unit,'CDELT2',cdelt2,6,
+      call ftpkyf(unit,'CDELT2',cdelt2,12,
      &  'coordinate increment along axis',status)
       call ftpkyf(unit,'CROTA2',crota2,6,
      &  'coordinate system rotation angle',status)
+      call ftpkyf(unit,'EQUINOX',2000.0,12,
+     &  'Default equinox of system - 2000',status)
       call ftpkyf(unit,'PIXEL',pixel,6,
      &  'Map grid pixel size',status)
       call ftpkyf(unit,'WAVELEN',wl,6,
